@@ -1,17 +1,47 @@
 package gift.wish.repository;
 
-import gift.wish.entity.Wish;
-import gift.member.entity.Member;
 import gift.product.entity.Product;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface WishRepository extends JpaRepository<Wish, Long> {
+@Repository
+public class WishRepository {
 
-    List<Wish> findByMember(Member member);
+    private final JdbcTemplate jdbcTemplate;
 
-    boolean existsByMemberAndProduct(Member member, Product product);
+    public WishRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
-    void deleteByMemberAndProduct(Member member, Product product);
+    private static final RowMapper<Product> productRowMapper = (rs, rowNum) -> {
+        Product product = new Product();
+        product.setId(rs.getLong("id"));
+        product.setName(rs.getString("name"));
+        product.setPrice(rs.getBigDecimal("price"));
+        product.setImgUrl(rs.getString("img_url"));
+        return product;
+    };
+
+    public List<Product> findAllProductsByMemberId(Long memberId) {
+        String sql = """
+                SELECT p.id, p.name, p.price, p.img_url
+                FROM products p
+                JOIN wishes w ON p.id = w.product_id
+                WHERE w.member_id = ?
+                """;
+        return jdbcTemplate.query(sql, productRowMapper, memberId);
+    }
+
+    public void save(Long memberId, Long productId) {
+        String sql = "INSERT INTO wishes (member_id, product_id) VALUES (?, ?)";
+        jdbcTemplate.update(sql, memberId, productId);
+    }
+
+    public void delete(Long memberId, Long productId) {
+        String sql = "DELETE FROM wishes WHERE member_id = ? AND product_id = ?";
+        jdbcTemplate.update(sql, memberId, productId);
+    }
 }

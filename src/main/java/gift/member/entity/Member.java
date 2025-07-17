@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "members")
 public class Member {
 
     @Id
@@ -23,7 +22,7 @@ public class Member {
     @Column(nullable = false)
     private String role;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "members", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Wish> wishes = new ArrayList<>();
 
     protected Member() {
@@ -34,7 +33,7 @@ public class Member {
         this.password = password;
         this.role = role;
     }
-  
+
     public Long getId() { return id;}
 
     public String getEmail() { return email;}
@@ -55,7 +54,9 @@ public class Member {
 
     public String getRole() { return role;}
 
-    public void addWish(Wish wish) {
-        wishes.add(wish);
+    public static Member createMember(String email, String password, String role) {
+        return new Member(email, password, role);
     }
+
 }
+
