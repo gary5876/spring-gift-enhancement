@@ -49,11 +49,11 @@
 <script>
     const token = localStorage.getItem("accessToken");
 
-    function renderWishes(wish) {
+    function renderWishes(wishes) {
         const tbody = document.getElementById("wish-tbody");
         tbody.innerHTML = "";
 
-        if (wish.length === 0) {
+        if (wishes.length === 0) {
             const row = document.createElement("tr");
             const cell = document.createElement("td");
             cell.setAttribute("colspan", "4");
@@ -63,7 +63,7 @@
             return;
         }
 
-        wish.forEach(product => {
+        wishes.forEach(product => {
             const row = document.createElement("tr");
 
             row.innerHTML = `

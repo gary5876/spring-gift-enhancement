@@ -29,19 +29,19 @@ public class WishRepository {
         String sql = """
                 SELECT p.id, p.name, p.price, p.img_url
                 FROM products p
-                JOIN wish w ON p.id = w.product_id
+                JOIN wishes w ON p.id = w.product_id
                 WHERE w.member_id = ?
                 """;
         return jdbcTemplate.query(sql, productRowMapper, memberId);
     }
 
     public void save(Long memberId, Long productId) {
-        String sql = "INSERT INTO wish (member_id, product_id) VALUES (?, ?)";
+        String sql = "INSERT INTO wishes (member_id, product_id) VALUES (?, ?)";
         jdbcTemplate.update(sql, memberId, productId);
     }
 
     public void delete(Long memberId, Long productId) {
-        String sql = "DELETE FROM wish WHERE member_id = ? AND product_id = ?";
+        String sql = "DELETE FROM wishes WHERE member_id = ? AND product_id = ?";
         jdbcTemplate.update(sql, memberId, productId);
     }
 }

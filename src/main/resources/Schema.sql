@@ -12,7 +12,7 @@ create table members(
     role varchar(20) not null
 );
 
-create table wish (
+create table wishes (
     id bigint auto_increment primary key,
     member_id bigint not null,
     product_id bigint not null,
