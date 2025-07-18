@@ -34,7 +34,7 @@ public class Member {
         this.password = password;
         this.role = role;
     }
-
+  
     public Long getId() { return id;}
 
     public String getEmail() { return email;}
@@ -59,4 +59,3 @@ public class Member {
         wishes.add(wish);
     }
 }
-
