@@ -2,7 +2,7 @@ package gift.product.controller;
 
 import gift.product.dto.ProductRequest;
 import gift.product.entity.Product;
-import gift.product.repository.ProductRepository;
+import gift.product.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,70 +11,66 @@ import org.springframework.validation.BindingResult;
 
 @Controller
 @RequestMapping("/admin/products")
-public class ProductAdminController {
+public class ProductViewController {
 
-    private final ProductRepository repository;
+    private final ProductService productService;
 
-    public ProductAdminController(ProductRepository repository) {
-
-        this.repository = repository;
+    public ProductViewController(ProductService productService) {
+        this.productService = productService;
     }
 
     @GetMapping
     public String list(Model model) {
-        model.addAttribute("products", repository.findAll());
+        model.addAttribute("products", productService.findAllProducts());
         return "productList";
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("productRequestDto", new ProductRequest("", null, ""));
+        model.addAttribute("productRequest", new ProductRequest("", null, ""));
         return "productAddEdit";
     }
 
     @PostMapping("/new")
-    public String create(@Valid @ModelAttribute("productRequestDto") ProductRequest dto,
+    public String create(@Valid @ModelAttribute("productRequest") ProductRequest request,
                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "productAddEdit";
         }
 
-        Product product = new Product(null, dto.getName(), dto.getPrice(), dto.getImgUrl());
-        repository.create(product);
+        productService.create(request);
         return "redirect:/admin/products";
     }
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        Product product = repository.findById(id).orElse(null);
-        if (product == null) {
-            return "redirect:/admin/products";
-        }
+        Product product = productService.findById(id);
+        if (product == null) return "redirect:/admin/products";
 
-        ProductRequest dto = new ProductRequest(product.getName(), product.getPrice(), product.getImgUrl());
-        model.addAttribute("productRequestDto", dto);
+        ProductRequest request = new ProductRequest(product.getName(), product.getPrice(), product.getImgUrl());
+        model.addAttribute("productRequest",request);
         model.addAttribute("productId", id);
         return "productAddEdit";
     }
 
     @PostMapping("/edit/{id}")
     public String update(@PathVariable Long id,
-            @Valid @ModelAttribute("productRequestDto") ProductRequest dto,
-            BindingResult bindingResult,
-            Model model) {
+                         @Valid @ModelAttribute("productRequest") ProductRequest request,
+                         BindingResult bindingResult,
+                         Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("productId", id);
             return "productAddEdit";
         }
 
-        Product updated = new Product(id, dto.getName(), dto.getPrice(), dto.getImgUrl());
-        repository.update(updated);
+        productService.update(id,request);
         return "redirect:/admin/products";
     }
 
     @PostMapping("/{id}")
     public String delete(@PathVariable Long id) {
-        repository.deleteById(id);
+        productService.delete(id);
         return "redirect:/admin/products";
     }
 }
+

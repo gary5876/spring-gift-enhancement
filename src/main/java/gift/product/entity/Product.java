@@ -1,40 +1,104 @@
 package gift.product.entity;
 
-import gift.product.dto.ProductRequest;
 import gift.product.dto.ProductResponse;
+import gift.wish.entity.Wish;
+
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
+@Entity
 public class Product {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 15, nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private BigDecimal price;
+
+    @Column(name = "img_url", nullable = false)
     private String imgUrl;
 
-    public Product() {}
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Wish> wishes = new ArrayList<>();
 
-    public Product(Long id, String name, BigDecimal price, String imgUrl) {
-        this.id = id;
+    protected Product() {
+    }
+
+    public Product(String name, BigDecimal price, String imgUrl) {
+        validateName(name);
+        validatePrice(price);
+        validateImgUrl(imgUrl);
         this.name = name;
         this.price = price;
         this.imgUrl = imgUrl;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Product(Product product) {
+        this.id = product.getId();
+        this.name = product.getName();
+        this.price = product.getPrice();
+        this.imgUrl = product.getImgUrl();
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("상품 이름은 비어 있을 수 없습니다");
+        }
+        if (name.length() > 15) {
+            throw new IllegalArgumentException("상품 이름은 최대 15자까지 입력할 수 있습니다");
+        }
+        if (!name.matches("^[\\p{L}\\p{N} ()\\[\\]+\\-&/_]*$")) {
+            throw new IllegalArgumentException("상품 이름에는 허용되지 않은 특수문자가 포함되어 있습니다");
+        }
+        if (name.contains("카카오") && !name.endsWith("카테캠")) {
+            throw new IllegalArgumentException("\"카카오\"가 포함된 상품 이름은 MD와 협의 후 사용해 주세요");
+        }
+    }
 
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
+    private void validatePrice(BigDecimal price) {
+        if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("가격은 0 이상이어야 합니다");
+        }
+    }
 
+    private void validateImgUrl(String imgUrl) {
+        if (imgUrl == null || imgUrl.isBlank()) {
+            throw new IllegalArgumentException("이미지 URL은 비어 있을 수 없습니다");
+        }
+    }
 
-    public String getImgUrl() { return imgUrl; }
-    public void setImgUrl(String imgUrl) { this.imgUrl = imgUrl; }
+    public void addWish(Wish wish) {
+        wishes.add(wish);
+    }
 
     public ProductResponse toResponse() {
         return new ProductResponse(id, name, price, imgUrl);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public List<Wish> getWishes() {
+        return wishes;
     }
 }

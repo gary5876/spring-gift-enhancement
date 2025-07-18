@@ -65,8 +65,8 @@ public class MemberService {
 
         String password = request.password().isBlank() ? member.getPassword() : BCrypt.hashpw(request.password(), BCrypt.gensalt());
 
-        Member updatedMember = new Member(id, request.email(), password, member.getRole());
-        memberRepository.update(updatedMember);
+        member.updateEmail(request.email());
+        member.updatePassword(password);
     }
 
     public void deleteMember(Long id) {

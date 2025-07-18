@@ -23,7 +23,7 @@ public class WishViewController {
 
     @GetMapping
     public String showWishList(@LoginMember Member member, Model model) {
-        List<ProductResponse> wishes = wishService.getWishes(member);
+        List<ProductResponse> wishes = wishService.getAllWishes(member);
         model.addAttribute("wishes", wishes);
         return "wishes/wishList";
     }

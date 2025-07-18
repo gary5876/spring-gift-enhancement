@@ -18,7 +18,7 @@ public class WishService {
         this.wishRepository = wishRepository;
     }
 
-    public List<ProductResponse> getWishes(Member member) {
+    public List<ProductResponse> getAllWishes(Member member) {
         try {
             List<Product> products = wishRepository.findAllProductsByMemberId(member.getId());
             return products.stream()
