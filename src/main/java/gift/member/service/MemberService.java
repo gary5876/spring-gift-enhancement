@@ -52,6 +52,7 @@ public class MemberService {
         return new LoginResponse(token);
     }
 
+    @Transactional
     public void updateMember(Long id, MemberRequest request) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new MemberNotFoundException("해당 ID의 회원을 찾을 수 없습니다."));
@@ -65,8 +66,8 @@ public class MemberService {
 
         String password = request.password().isBlank() ? member.getPassword() : BCrypt.hashpw(request.password(), BCrypt.gensalt());
 
-        Member updatedMember = new Member(id, request.email(), password, member.getRole());
-        memberRepository.update(updatedMember);
+        member.updateEmail(request.email());
+        member.updatePassword(password);
     }
 
     public void deleteMember(Long id) {

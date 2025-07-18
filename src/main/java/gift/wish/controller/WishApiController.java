@@ -22,8 +22,8 @@ public class WishApiController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> getWishes(@LoginMember Member member) {
-        List<ProductResponse> wishes = wishService.getWishes(member);
+    public ResponseEntity<List<ProductResponse>> getAllWishes(@LoginMember Member member) {
+        List<ProductResponse> wishes = wishService.getAllWishes(member);
         return ResponseEntity.ok(wishes);
     }
 
