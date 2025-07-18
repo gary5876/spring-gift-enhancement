@@ -98,18 +98,7 @@ public class Product {
         return imgUrl;
     }
 
-    public void updateName(String name) {
-        validateName(name);
-        this.name = name;
-    }
-
-    public void updatePrice(BigDecimal price) {
-        validatePrice(price);
-        this.price = price;
-    }
-
-    public void updateImgUrl(String imgUrl) {
-        validateImgUrl(imgUrl);
-        this.imgUrl = imgUrl;
+    public List<Wish> getWishes() {
+        return wishes;
     }
 }

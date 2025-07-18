@@ -36,10 +36,8 @@ public class ProductService {
         Product existing = repository.findById(id).orElse(null);
         if (existing == null) return null;
 
-        existing.updateName(request.getName());
-        existing.updatePrice(request.getPrice());
-        existing.updateImgUrl(request.getImgUrl());
-
+        existing = new Product(request.getName(), request.getPrice(), request.getImgUrl());
+        existing = repository.save(existing);
         return existing;
     }
 
