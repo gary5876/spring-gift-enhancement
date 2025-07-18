@@ -98,10 +98,6 @@ public class Product {
         return imgUrl;
     }
 
-    public List<Wish> getWishes() {
-        return wishes;
-    }
-
     public void updateName(String name) {
         validateName(name);
         this.name = name;

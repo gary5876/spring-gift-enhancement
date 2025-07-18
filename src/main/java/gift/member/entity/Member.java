@@ -1,6 +1,5 @@
 package gift.member.entity;
 
-import gift.product.entity.Product;
 import gift.wish.entity.Wish;
 import jakarta.persistence.*;
 
@@ -56,19 +55,8 @@ public class Member {
 
     public String getRole() { return role;}
 
-    public static Member createMember(String email, String password, String role) {
-        return new Member(email, password, role);
-    }
-
-    public void wishProduct(Product product) {
-        new Wish(this, product);
-    }
-
     public void addWish(Wish wish) {
         wishes.add(wish);
     }
-
-    public List<Wish> getWishes() { return wishes;}
-
 }
 
