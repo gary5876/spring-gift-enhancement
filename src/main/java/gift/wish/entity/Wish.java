@@ -4,6 +4,8 @@ import gift.member.entity.Member;
 import gift.product.entity.Product;
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "wishes")
 public class Wish {
@@ -40,5 +42,17 @@ public class Wish {
 
     public Product getProduct() {
         return product;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Wish wish)) return false;
+        return Objects.equals(id, wish.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

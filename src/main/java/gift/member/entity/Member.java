@@ -1,5 +1,6 @@
 package gift.member.entity;
 
+import gift.product.entity.Product;
 import gift.wish.entity.Wish;
 import jakarta.persistence.*;
 
@@ -23,7 +24,7 @@ public class Member {
     @Column(nullable = false)
     private String role;
 
-    @OneToMany(mappedBy = "members", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Wish> wishes = new ArrayList<>();
 
     protected Member() {
@@ -58,6 +59,16 @@ public class Member {
     public static Member createMember(String email, String password, String role) {
         return new Member(email, password, role);
     }
+
+    public void wishProduct(Product product) {
+        new Wish(this, product);
+    }
+
+    public void addWish(Wish wish) {
+        wishes.add(wish);
+    }
+
+    public List<Wish> getWishes() { return wishes;}
 
 }
 
