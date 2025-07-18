@@ -52,6 +52,7 @@ public class MemberService {
         return new LoginResponse(token);
     }
 
+    @Transactional
     public void updateMember(Long id, MemberRequest request) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new MemberNotFoundException("해당 ID의 회원을 찾을 수 없습니다."));

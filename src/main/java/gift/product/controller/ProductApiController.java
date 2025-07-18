@@ -41,6 +41,8 @@ public class ProductApiController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ProductRequest request) {
+        Product existing = productService.findById(id);
+        if (existing == null) return ResponseEntity.notFound().build();
         Product updated = productService.update(id, request);
         if (updated == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(updated);

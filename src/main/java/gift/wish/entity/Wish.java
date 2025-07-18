@@ -1,27 +1,58 @@
 package gift.wish.entity;
 
+import gift.member.entity.Member;
+import gift.product.entity.Product;
+import jakarta.persistence.*;
+
+import java.util.Objects;
+
+@Entity
+@Table(name = "wishes")
 public class Wish {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long memberId;
-    private Long productId;
 
-    public Wish(Long id, Long memberId, Long productId) {
-        this.id = id;
-        this.memberId = memberId;
-        this.productId = productId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    protected Wish() {
     }
 
-    public Wish(Long memberId, Long productId) {
-        this.memberId = memberId;
-        this.productId = productId;
+    public Wish(Member member, Product product) {
+        this.member = member;
+        this.product = product;
+        member.addWish(this);
+        product.addWish(this);
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Long getMemberId() { return memberId; }
-    public void setMemberId(Long memberId) { this.memberId = memberId; }
+    public Member getMember() {
+        return member;
+    }
 
-    public Long getProductId() { return productId; }
-    public void setProductId(Long productId) { this.productId = productId; }
+    public Product getProduct() {
+        return product;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Wish wish)) return false;
+        return Objects.equals(id, wish.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
