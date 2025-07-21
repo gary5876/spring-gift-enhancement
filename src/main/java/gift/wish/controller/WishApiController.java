@@ -1,6 +1,5 @@
 package gift.wish.controller;
 
-import gift.product.dto.ProductResponse;
 import gift.wish.dto.WishRequest;
 import gift.member.entity.Member;
 import gift.global.resolver.LoginMember;
@@ -13,8 +12,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/wishes")
 public class WishApiController {
@@ -25,13 +22,6 @@ public class WishApiController {
         this.wishService = wishService;
     }
 
-    /*@GetMapping
-    public ResponseEntity<List<ProductResponse>> getAllWishes(@LoginMember Member member) {
-        List<ProductResponse> wishes = wishService.getAllWishes(member);
-        return ResponseEntity.ok(wishes);
-    }
-
-     */
     @GetMapping
     public ResponseEntity<Page<WishResponse>> getPagedWishes(
             @LoginMember Member member,
@@ -55,8 +45,6 @@ public class WishApiController {
         wishService.updateWishQuantity(member, request.productId(), request.quantity());
         return ResponseEntity.noContent().build();
     }
-
-
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteWish(@LoginMember Member member, @PathVariable("productId") Long productId) {

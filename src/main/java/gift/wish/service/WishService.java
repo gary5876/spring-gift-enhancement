@@ -69,7 +69,7 @@ public class WishService {
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
         Wish wish = wishRepository.findByMemberAndProduct(member, product)
-                .orElseThrow(() -> new IllegalArgumentException("찜한 상품이 아닙니다."));
+                .orElseThrow(() -> new ProductNotFoundException(productId));
 
         if (quantity <= 0) {
             wishRepository.delete(wish);

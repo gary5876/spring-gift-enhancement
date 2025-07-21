@@ -1,6 +1,5 @@
 package gift.product.repository;
 
-import gift.global.exception.ProductNotFoundException;
 import gift.product.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
