@@ -1,5 +1,6 @@
 package gift.wish.service;
 
+import gift.global.exception.ProductNotFoundException;
 import gift.global.exception.WishAlreadyExistsException;
 import gift.member.entity.Member;
 import gift.member.repository.MemberRepository;
@@ -38,7 +39,7 @@ public class WishService {
 
     @Transactional
     public void addWish(Member member, Long productId) {
-        Product product = productRepository.getByIdOrThrow(productId);
+        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(productId));
 
         if (wishRepository.existsByMemberAndProduct(member, product)) {
             throw new WishAlreadyExistsException(product);
@@ -49,7 +50,7 @@ public class WishService {
 
     @Transactional
     public void deleteWish(Member member, Long productId) {
-        Product product = productRepository.getByIdOrThrow(productId);
+        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(productId));
 
         wishRepository.deleteByMemberAndProduct(member, product);
     }

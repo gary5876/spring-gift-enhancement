@@ -16,8 +16,4 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p WHERE p.name LIKE %:name%")
     Page<Product> searchByName(@Param("name") String name, Pageable pageable);
-
-    default Product getByIdOrThrow(Long id) {
-        return findById(id).orElseThrow(() -> new ProductNotFoundException(id));
-    }
 }
