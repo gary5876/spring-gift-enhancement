@@ -6,6 +6,9 @@ import gift.member.entity.Member;
 import gift.global.resolver.LoginMember;
 import gift.wish.service.WishService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,9 +24,19 @@ public class WishApiController {
         this.wishService = wishService;
     }
 
-    @GetMapping
+    /*@GetMapping
     public ResponseEntity<List<ProductResponse>> getAllWishes(@LoginMember Member member) {
         List<ProductResponse> wishes = wishService.getAllWishes(member);
+        return ResponseEntity.ok(wishes);
+    }
+
+     */
+    @GetMapping
+    public ResponseEntity<Page<ProductResponse>> getPagedWishes(
+            @LoginMember Member member,
+            @PageableDefault(size = 5) Pageable pageable
+    ) {
+        Page<ProductResponse> wishes = wishService.getPagedWishes(member, pageable);
         return ResponseEntity.ok(wishes);
     }
 
