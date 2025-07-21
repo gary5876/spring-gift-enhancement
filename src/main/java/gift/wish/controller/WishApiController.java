@@ -4,6 +4,7 @@ import gift.product.dto.ProductResponse;
 import gift.wish.dto.WishRequest;
 import gift.member.entity.Member;
 import gift.global.resolver.LoginMember;
+import gift.wish.dto.WishResponse;
 import gift.wish.service.WishService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -32,11 +33,11 @@ public class WishApiController {
 
      */
     @GetMapping
-    public ResponseEntity<Page<ProductResponse>> getPagedWishes(
+    public ResponseEntity<Page<WishResponse>> getPagedWishes(
             @LoginMember Member member,
             @PageableDefault(size = 5) Pageable pageable
     ) {
-        Page<ProductResponse> wishes = wishService.getPagedWishes(member, pageable);
+        Page<WishResponse> wishes = wishService.getPagedWishes(member, pageable);
         return ResponseEntity.ok(wishes);
     }
 
@@ -45,6 +46,17 @@ public class WishApiController {
         wishService.addWish(member, request.productId());
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping
+    public ResponseEntity<Void> updateQuantity(
+            @LoginMember Member member,
+            @Valid @RequestBody WishRequest request
+    ) {
+        wishService.updateWishQuantity(member, request.productId(), request.quantity());
+        return ResponseEntity.noContent().build();
+    }
+
+
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteWish(@LoginMember Member member, @PathVariable("productId") Long productId) {

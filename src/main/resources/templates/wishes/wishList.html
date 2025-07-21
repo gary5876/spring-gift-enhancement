@@ -30,7 +30,8 @@
                     <th>상품명</th>
                     <th>가격</th>
                     <th>이미지</th>
-                    <th>삭제</th>
+                    <th>수량</th>
+                    <th>작업</th>
                 </tr>
                 </thead>
                 <tbody id="wish-tbody"></tbody>
@@ -72,7 +73,7 @@
         if (wishes.length === 0) {
             const row = document.createElement("tr");
             const cell = document.createElement("td");
-            cell.setAttribute("colspan", "4");
+            cell.setAttribute("colspan", "5");
             cell.textContent = "목록에 상품이 없습니다.";
             row.appendChild(cell);
             tbody.appendChild(row);
@@ -87,9 +88,15 @@
         <td>${product.price}원</td>
         <td><img src="${product.imgUrl}" alt="상품 이미지" width="80"/></td>
         <td>
-          <button class="btn btn-danger btn-sm" onclick="deleteWish(${product.id})">삭제</button>
+          <input type="number" value="${product.quantity}" min="0"
+                 class="form-control form-control-sm quantity-input" data-id="${product.productId}" />
+        </td>
+        <td>
+          <button class="btn btn-primary btn-sm me-1" onclick="changeQuantity(${product.productId})">변경</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteWish(${product.productId})">삭제</button>
         </td>
       `;
+
             tbody.appendChild(row);
         });
     }
@@ -113,16 +120,51 @@
     }
 
     async function deleteWish(productId) {
+        console.log("삭제 요청:", productId);
+
         const res = await fetch(`/api/wishes/${productId}`, {
             method: "DELETE",
             headers: { "Authorization": "Bearer " + token }
         });
 
+        const text = await res.text();
+
         if (res.ok) {
             alert("상품이 삭제되었습니다.");
             await loadWishes(currentPage);
         } else {
-            alert("삭제 실패: " + await res.text());
+            alert(`삭제 실패 (${res.status}): ${text}`);
+        }
+    }
+
+    async function changeQuantity(productId) {
+        const input = document.querySelector(`input.quantity-input[data-id="${productId}"]`);
+        const quantity = parseInt(input.value, 10);
+
+        if (isNaN(quantity) || quantity < 0) {
+            alert("수량은 0 이상의 숫자여야 합니다.");
+            return;
+        }
+
+        if (quantity === 0) {
+            await deleteWish(productId);
+            return;
+        }
+
+        const res = await fetch(`/api/wishes`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({ productId, quantity })
+        });
+
+        if (res.ok) {
+            alert("수량이 변경되었습니다.");
+            await loadWishes(currentPage);
+        } else {
+            alert("수량 변경 실패: " + await res.text());
         }
     }
 

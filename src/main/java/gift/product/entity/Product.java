@@ -78,10 +78,6 @@ public class Product {
         wishes.add(wish);
     }
 
-    public ProductResponse toResponse() {
-        return new ProductResponse(id, name, price, imgUrl);
-    }
-
     public Long getId() {
         return id;
     }

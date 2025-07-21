@@ -7,6 +7,7 @@ import gift.member.repository.MemberRepository;
 import gift.product.dto.ProductResponse;
 import gift.product.entity.Product;
 import gift.product.repository.ProductRepository;
+import gift.wish.dto.WishResponse;
 import gift.wish.entity.Wish;
 import gift.wish.repository.WishRepository;
 import org.springframework.data.domain.Page;
@@ -39,10 +40,9 @@ public class WishService {
                 .toList();
     }
 
-    public Page<ProductResponse> getPagedWishes(Member member, Pageable pageable) {
+    public Page<WishResponse> getPagedWishes(Member member, Pageable pageable) {
         return wishRepository.findByMember(member, pageable)
-                .map(Wish::getProduct)
-                .map(ProductResponse::from);
+                .map(WishResponse::from);
     }
 
     @Transactional
@@ -62,4 +62,20 @@ public class WishService {
 
         wishRepository.deleteByMemberAndProduct(member, product);
     }
+
+    @Transactional
+    public void updateWishQuantity(Member member, Long productId, int quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+
+        Wish wish = wishRepository.findByMemberAndProduct(member, product)
+                .orElseThrow(() -> new IllegalArgumentException("찜한 상품이 아닙니다."));
+
+        if (quantity <= 0) {
+            wishRepository.delete(wish);
+        } else {
+            wish.updateQuantity(quantity);
+        }
+    }
+
 }

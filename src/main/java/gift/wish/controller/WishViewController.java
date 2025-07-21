@@ -2,6 +2,7 @@ package gift.wish.controller;
 
 import gift.global.resolver.LoginMember;
 import gift.product.dto.ProductResponse;
+import gift.wish.dto.WishResponse;
 import gift.wish.service.WishService;
 import gift.member.entity.Member;
 import org.springframework.stereotype.Controller;
